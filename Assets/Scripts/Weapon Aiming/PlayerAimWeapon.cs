@@ -20,6 +20,8 @@ public class PlayerAimWeapon : MonoBehaviour
     private Transform aimGunEndPointTransform;
     private Animator aimAnimator;
 
+    public GameObject projectilePrefab;
+
 
     private void Awake()
     {
@@ -72,6 +74,17 @@ public class PlayerAimWeapon : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePosition = UtilsClass.GetMouseWorldPosition();
+            Vector3 shootDirection = (mousePosition - aimGunEndPointTransform.position).normalized;
+
+            GameObject projectile = Instantiate(projectilePrefab, aimGunEndPointTransform.position, Quaternion.identity);
+
+            projectile.transform.right = shootDirection;
+
+            ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
+            if (projectileController != null)
+            {
+                projectileController.damage = 10; // Adjust damage amount as needed
+            }
 
             aimAnimator.SetTrigger("Shoot");
 
