@@ -167,6 +167,45 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Shoot"",
+            ""id"": ""1a9a1153-5201-45ee-aa77-ff3e4b71aa00"",
+            ""actions"": [
+                {
+                    ""name"": ""FireWeapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""09344de0-925c-4852-8a03-eb1e696933a9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""2212c30b-2a19-4072-be73-f297ce84fb4a"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""FireWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4a82a38c-9b20-41f6-876e-9e800408bb9c"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""FireWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -237,6 +276,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_PlayerMovement_Move = m_PlayerMovement.FindAction("Move", throwIfNotFound: true);
         m_PlayerMovement_Jump = m_PlayerMovement.FindAction("Jump", throwIfNotFound: true);
         m_PlayerMovement_Dash = m_PlayerMovement.FindAction("Dash", throwIfNotFound: true);
+        // Shoot
+        m_Shoot = asset.FindActionMap("Shoot", throwIfNotFound: true);
+        m_Shoot_FireWeapon = m_Shoot.FindAction("FireWeapon", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -356,6 +398,52 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public PlayerMovementActions @PlayerMovement => new PlayerMovementActions(this);
+
+    // Shoot
+    private readonly InputActionMap m_Shoot;
+    private List<IShootActions> m_ShootActionsCallbackInterfaces = new List<IShootActions>();
+    private readonly InputAction m_Shoot_FireWeapon;
+    public struct ShootActions
+    {
+        private @PlayerControls m_Wrapper;
+        public ShootActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @FireWeapon => m_Wrapper.m_Shoot_FireWeapon;
+        public InputActionMap Get() { return m_Wrapper.m_Shoot; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(ShootActions set) { return set.Get(); }
+        public void AddCallbacks(IShootActions instance)
+        {
+            if (instance == null || m_Wrapper.m_ShootActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_ShootActionsCallbackInterfaces.Add(instance);
+            @FireWeapon.started += instance.OnFireWeapon;
+            @FireWeapon.performed += instance.OnFireWeapon;
+            @FireWeapon.canceled += instance.OnFireWeapon;
+        }
+
+        private void UnregisterCallbacks(IShootActions instance)
+        {
+            @FireWeapon.started -= instance.OnFireWeapon;
+            @FireWeapon.performed -= instance.OnFireWeapon;
+            @FireWeapon.canceled -= instance.OnFireWeapon;
+        }
+
+        public void RemoveCallbacks(IShootActions instance)
+        {
+            if (m_Wrapper.m_ShootActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IShootActions instance)
+        {
+            foreach (var item in m_Wrapper.m_ShootActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_ShootActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public ShootActions @Shoot => new ShootActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -406,5 +494,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+    }
+    public interface IShootActions
+    {
+        void OnFireWeapon(InputAction.CallbackContext context);
     }
 }

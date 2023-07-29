@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering.LookDev;
 using UnityEngine;
+using Utils;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using UnityEngine.Windows;
 
 public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActions
@@ -10,6 +12,7 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
+    [SerializeField] private Transform aimTransform;
     [SerializeField] private TrailRenderer tr;
 
     private PlayerControls playerControls;
@@ -41,7 +44,7 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
     private float jumpBufferCounter;
     [SerializeField] private float jumpBufferTime;
 
-    private bool isFacingRight = true;
+    public bool isFacingRight = true;
 
 
     private void Awake()
@@ -87,6 +90,8 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
             coyoteTimeCheckBool = false;
         }
 
+        Flip();
+
         // Smoothens Player Movement
         horizontal = UnityEngine.Input.GetAxis("Horizontal");
     }
@@ -101,16 +106,6 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
 
         // Horizontal Movement
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-
-        if (!isFacingRight && horizontal > 0f)
-        {
-            Flip();
-        }
-
-        else if (isFacingRight && horizontal < 0f)
-        {
-            Flip();
-        }
 
         // Applies momentum to character after dash
         if (hasDashed == true && isFacingRight && !IsGrounded())
@@ -230,23 +225,28 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
     // Flips character sprite to face correct direction
     private void Flip()
     {
-        isFacingRight = !isFacingRight;
+        Vector3 mousePosition = UnityEngine.Input.mousePosition;
 
-        Vector3 localScale = transform.localScale;
-        localScale.x *= -1f;
+        Vector3 playerPosition = Camera.main.WorldToScreenPoint(transform.position);
 
-        transform.localScale = localScale;
-    }
+        if (mousePosition.x < playerPosition.x)
+        {
+            isFacingRight = false;
+        }
 
+        else
+        {
+            isFacingRight = true;
+        }
 
-    private void OnEnable()
-    {
-        playerControls.Enable();
-    }
+        if (isFacingRight)
+        {
+            transform.localScale = new Vector3(1.53f, 1.527423f, 1.504272f);
+        }
 
-
-    private void OnDisable()
-    {
-        playerControls.Disable();
+        else
+        {
+            transform.localScale = new Vector3(-1.53f, 1.527423f, 1.504272f);
+        }
     }
 }

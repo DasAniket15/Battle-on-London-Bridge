@@ -11,7 +11,7 @@ public class TaskTowerHop : Node
     private Transform[] _towers;
 
     private int _currentTowerIndex = 0;
-    private float _waitTime = 15f; // in seconds
+    private float _waitTime = 1f; // in seconds
     private float _waitCounter = 0f;
     private bool _waiting = false;
 
