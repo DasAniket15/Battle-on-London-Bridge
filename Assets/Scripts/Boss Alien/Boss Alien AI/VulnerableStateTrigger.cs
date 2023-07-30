@@ -2,73 +2,69 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BehaviorTree;
+using Utils;
 
 public class VulnerableStateTrigger : Node
 {
-    public bool vulnerability;
-    private float _waitCounter = 0f;
+   
     private BossHealth bossHealth;
     private ProjectileController projectileController;
-    private int currentHealth;
 
-    public VulnerableStateTrigger(BossHealth bossHealth, ProjectileController projectileController)
+    public bool vulnerability;
+    private static float _waitCounter = 0f;
+    private int currentHealth;
+    public int collisionThreshold = 5;
+    public bool vulnerabilityOver = false;
+    private int bulletHit;
+    private int waitTime;
+    private int damageToBoss;
+
+    public VulnerableStateTrigger(BossHealth bossHealth, ProjectileController projectileController, int bulletHit, int waitTime, int damageToBoss)
     { 
         this.bossHealth = bossHealth;
         this.projectileController = projectileController;
+        this.bulletHit = bulletHit; 
+        this.waitTime = waitTime;
+        this.damageToBoss = damageToBoss;
+        
     }
 
     public override NodeState Evaluate()
     {
-        _waitCounter += Time.deltaTime;
+       
         currentHealth = bossHealth.GetCurrentHealth();
-        //bossHealth.SetDamage(20);
-        Debug.Log(currentHealth);
-        projectileController.damage = 10;
 
-     
-        if (currentHealth == 800)
+       
+        Debug.Log(currentHealth);
+      
+
+
+        if (projectileController.GetCounter() == bulletHit)
 
         {
             vulnerability = true;
-            bossHealth.SetCurrentHealth(790);
+            projectileController.SetCounter(bulletHit +1);
+            projectileController.SetDamage(damageToBoss);
+
+
+            FunctionTimer.Create(vulnerableAction, waitTime);
            
-            Debug.Log("hi");
+            
             state = NodeState.SUCCESS;
             return state;
         }
-        else if (currentHealth == 600)
+        else if (vulnerabilityOver == true)
         {
-            bossHealth.SetCurrentHealth(590);
+            vulnerabilityOver = false;
             vulnerability = false;
+            projectileController.SetCounter(0);
+            projectileController.SetDamage(0);
 
             state = NodeState.RUNNING;
             return state;
 
         }
-
-        else if (currentHealth == 400)
-        {
-
-            vulnerability = true;
-            Debug.Log("hi");
-            bossHealth.SetCurrentHealth(390);
-
-            state = NodeState.SUCCESS;
-            return state;
-
-
-        }
-        else if (currentHealth == 200)
-        {
-            bossHealth.SetCurrentHealth(190);
-            vulnerability = false;
-            Debug.Log("hi");
-
-            state = NodeState.SUCCESS;
-            return state;
-
-
-        }
+        
         else 
         {
             state = NodeState.FAILURE;
@@ -76,5 +72,13 @@ public class VulnerableStateTrigger : Node
 
         }
 
+
+
+    }
+    private void vulnerableAction() 
+    {
+        vulnerabilityOver = true;
+        _waitCounter = _waitCounter + 1;
+        Debug.Log("wait times" + _waitCounter);
     }
     }

@@ -776,6 +776,9 @@ MonoBehaviour:
   bossCollider: {fileID: 378635403}
   paltformCollider: {fileID: 1312201900}
   hitBox: {fileID: 378635405}
+  bulletHit: 20
+  waitTime: 10
+  damageToBoss: 20
   preFab: {fileID: 6341697272815391413, guid: b3fbe014c3d2d1740a680dd947316f0e, type: 3}
 --- !u!70 &378635403
 CapsuleCollider2D:

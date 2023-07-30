@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
-using static UnityEditor.Searcher.SearcherWindow.Alignment;
+
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 

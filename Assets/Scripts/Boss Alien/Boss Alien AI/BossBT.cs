@@ -18,6 +18,11 @@ public class BossBT : BehaviorTree.Tree
     [SerializeField] private CapsuleCollider2D bossCollider;
     [SerializeField] private BoxCollider2D paltformCollider;
     [SerializeField] private CircleCollider2D hitBox;
+    [SerializeField] private int bulletHit;
+    [SerializeField] private int waitTime;
+    [SerializeField] private int damageToBoss;
+
+
     public GameObject preFab;
 
 
@@ -44,7 +49,7 @@ public class BossBT : BehaviorTree.Tree
         projectileController = preFab.GetComponent<ProjectileController>();
         bossHealth = GetComponent<BossHealth>();
 
-        vulnerableStateTrigger = new VulnerableStateTrigger(bossHealth, projectileController);
+        vulnerableStateTrigger = new VulnerableStateTrigger(bossHealth, projectileController, bulletHit,waitTime,damageToBoss);
 
         Node root = new Selector(new List<Node>
         {
