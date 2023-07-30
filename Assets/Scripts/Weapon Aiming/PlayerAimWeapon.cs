@@ -20,6 +20,7 @@ public class PlayerAimWeapon : MonoBehaviour
     private Transform aimGunEndPointTransform;
     private Animator aimAnimator;
 
+   
     public GameObject projectilePrefab;
 
 
@@ -37,7 +38,7 @@ public class PlayerAimWeapon : MonoBehaviour
         HandleAiming();
         HandleShooting();
     }
-
+   
 
     private void HandleAiming()
     {
@@ -83,7 +84,7 @@ public class PlayerAimWeapon : MonoBehaviour
             ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
             if (projectileController != null)
             {
-                projectileController.damage = 10; // Adjust damage amount as needed
+                //projectileController.damage = 10; // Adjust damage amount as needed
             }
 
             aimAnimator.SetTrigger("Shoot");
@@ -93,6 +94,8 @@ public class PlayerAimWeapon : MonoBehaviour
                 gunEndPointPosition = aimGunEndPointTransform.position,
                 shootPosition = mousePosition,
             });
+
+            
         }
     }
 }

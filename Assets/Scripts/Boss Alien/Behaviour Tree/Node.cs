@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace BehaviorTree
 {
@@ -96,5 +97,19 @@ namespace BehaviorTree
 
             return false;
         }
+
+        public virtual NodeState GetState()
+        {
+            return state;
+        }
+
+        // Setter method for 'state'
+        public void SetState(NodeState newState)
+        {
+            state = newState;
+        }
+
+
+
     }
 }

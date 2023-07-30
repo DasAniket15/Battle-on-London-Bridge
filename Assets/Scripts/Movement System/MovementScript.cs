@@ -58,6 +58,7 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
     // Update is called once per frame
     void Update()
     {
+        
         // Coyote Time
         if (IsGrounded())
         {

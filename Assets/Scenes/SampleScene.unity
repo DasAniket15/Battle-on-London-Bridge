@@ -681,6 +681,7 @@ GameObject:
   - component: {fileID: 378635404}
   - component: {fileID: 378635403}
   - component: {fileID: 378635405}
+  - component: {fileID: 378635406}
   m_Layer: 0
   m_Name: Boss Alien
   m_TagString: Boss
@@ -770,6 +771,12 @@ MonoBehaviour:
   towers:
   - {fileID: 1728121605}
   - {fileID: 831202199}
+  rb: {fileID: 378635404}
+  bulletCollider: {fileID: 6659847298176305927, guid: b3fbe014c3d2d1740a680dd947316f0e, type: 3}
+  bossCollider: {fileID: 378635403}
+  paltformCollider: {fileID: 1312201900}
+  hitBox: {fileID: 378635405}
+  preFab: {fileID: 6341697272815391413, guid: b3fbe014c3d2d1740a680dd947316f0e, type: 3}
 --- !u!70 &378635403
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -823,6 +830,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0.19061689}
   serializedVersion: 2
   m_Radius: 0.06539895
+--- !u!114 &378635406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378635398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffff064bdfb02224d8e892637fb632c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 1000
 --- !u!1 &399354234
 GameObject:
   m_ObjectHideFlags: 0
@@ -2511,9 +2531,10 @@ GameObject:
   - component: {fileID: 1312201901}
   - component: {fileID: 1312201900}
   - component: {fileID: 1312201899}
+  - component: {fileID: 1312201903}
   m_Layer: 6
   m_Name: Roof Bridge
-  m_TagString: Untagged
+  m_TagString: OneWayPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2550,7 +2571,7 @@ BoxCollider2D:
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_UsedByEffector: 0
+  m_UsedByEffector: 1
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
@@ -2624,14 +2645,33 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312201898}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.5968909, y: 3.4188952, z: 0}
-  m_LocalScale: {x: 18.542332, y: -0.45422602, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -1, w: 0}
+  m_LocalPosition: {x: 1.64, y: 3.08, z: 0}
+  m_LocalScale: {x: 18.542332, y: -0.502056, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 126533252}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
+--- !u!251 &1312201903
+PlatformEffector2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312201898}
+  m_Enabled: 1
+  m_UseColliderMask: 1
+  m_ColliderMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RotationalOffset: 0
+  m_UseOneWay: 1
+  m_UseOneWayGrouping: 0
+  m_SurfaceArc: 180
+  m_UseSideFriction: 0
+  m_UseSideBounce: 0
+  m_SideArc: 1
 --- !u!1 &1387929856
 GameObject:
   m_ObjectHideFlags: 0
