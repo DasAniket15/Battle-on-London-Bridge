@@ -43,30 +43,32 @@ public class PlayerAimWeapon : MonoBehaviour
     private void HandleAiming()
     {
         Vector3 mousePosition = UtilsClass.GetMouseWorldPosition();
-
         Vector3 aimDirection = (mousePosition - transform.position).normalized;
-
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
 
-        if (!GetComponentInParent<MovementScript>().isFacingRight)
+        if (mousePosition.y > 0 && angle > 0)
         {
-            angle -= 180f;
+
+            if (!GetComponentInParent<MovementScript>().isFacingRight)
+            {
+                angle -= 180f;
+            }
+
+            aimTransform.eulerAngles = new Vector3(0, 0, angle);
+
+            Vector3 aimLocalScale = Vector3.one;
+            if (angle > 90 || angle < -90)
+            {
+                aimLocalScale.y = -1f;
+            }
+
+            else
+            {
+                aimLocalScale.y = +1f;
+            }
+
+            aimTransform.localScale = aimLocalScale;
         }
-
-        aimTransform.eulerAngles = new Vector3(0, 0, angle);
-
-        Vector3 aimLocalScale = Vector3.one;
-        if (angle > 90 || angle < -90)
-        {
-            aimLocalScale.y = -1f;
-        }
-
-        else
-        {
-            aimLocalScale.y = +1f;
-        }
-
-        aimTransform.localScale = aimLocalScale;
     }
 
 
@@ -78,14 +80,12 @@ public class PlayerAimWeapon : MonoBehaviour
             Vector3 shootDirection = (mousePosition - aimGunEndPointTransform.position).normalized;
 
             GameObject projectile = Instantiate(projectilePrefab, aimGunEndPointTransform.position, Quaternion.identity);
+            
 
             projectile.transform.right = shootDirection;
 
             ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
-            if (projectileController != null)
-            {
-                //projectileController.damage = 10; // Adjust damage amount as needed
-            }
+          
 
             aimAnimator.SetTrigger("Shoot");
 

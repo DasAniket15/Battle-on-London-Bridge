@@ -35,7 +35,7 @@ public class VulnerableState : Node
         {
              // Make the boss ignore collision with the specified platform
             Physics2D.IgnoreCollision(bossCollider, paltformCollider);
-            Physics2D.IgnoreCollision(hitBox, paltformCollider);
+            //Physics2D.IgnoreCollision(hitBox, paltformCollider);
 
             collision = false;
             Debug.Log("1");
