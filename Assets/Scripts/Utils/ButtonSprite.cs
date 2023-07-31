@@ -72,7 +72,10 @@ namespace Utils
             hoverBehaviourType = HoverBehaviour.Change_Color;
             hoverBehaviour_Color_Enter = colorOver;
             hoverBehaviour_Color_Exit = colorOut;
-            if (hoverBehaviour_Image == null) hoverBehaviour_Image = transform.GetComponent<SpriteRenderer>();
+            
+            if (hoverBehaviour_Image == null)
+                hoverBehaviour_Image = transform.GetComponent<SpriteRenderer>();
+            
             hoverBehaviour_Image.color = hoverBehaviour_Color_Exit;
             SetupHoverBehaviour();
         }
@@ -80,12 +83,20 @@ namespace Utils
 
         void OnMouseDown()
         {
-            if (!clickThroughUI && IsPointerOverUI()) return;
+            if (!clickThroughUI && IsPointerOverUI())
+                return;
 
-            if (internalOnMouseDownFunc != null) internalOnMouseDownFunc();
-            if (ClickFunc != null) ClickFunc();
-            if (MouseDownOnceFunc != null) MouseDownOnceFunc();
-            if (triggerMouseOutFuncOnClick) OnMouseExit();
+            if (internalOnMouseDownFunc != null)
+                internalOnMouseDownFunc();
+            
+            if (ClickFunc != null)
+                ClickFunc();
+            
+            if (MouseDownOnceFunc != null)
+                MouseDownOnceFunc();
+            
+            if (triggerMouseOutFuncOnClick)
+                OnMouseExit();
         }
 
 
@@ -97,39 +108,62 @@ namespace Utils
 
         void OnMouseUp()
         {
-            if (MouseUpOnceFunc != null) MouseUpOnceFunc();
+            if (MouseUpOnceFunc != null)
+                MouseUpOnceFunc();
         }
 
 
         void OnMouseEnter()
         {
-            if (!clickThroughUI && IsPointerOverUI()) return;
+            if (!clickThroughUI && IsPointerOverUI())
+                return;
 
-            if (internalOnMouseEnterFunc != null) internalOnMouseEnterFunc();
-            if (hoverBehaviour_Move) transform.localPosition = posEnter;
-            if (hoverBehaviourFunc_Enter != null) hoverBehaviourFunc_Enter();
-            if (MouseOverOnceFunc != null) MouseOverOnceFunc();
-            if (MouseOverOnceTooltipFunc != null) MouseOverOnceTooltipFunc();
+            if (internalOnMouseEnterFunc != null)
+                internalOnMouseEnterFunc();
+            
+            if (hoverBehaviour_Move)
+                transform.localPosition = posEnter;
+            
+            if (hoverBehaviourFunc_Enter != null)
+                hoverBehaviourFunc_Enter();
+            
+            if (MouseOverOnceFunc != null)
+                MouseOverOnceFunc();
+            
+            if (MouseOverOnceTooltipFunc != null)
+                MouseOverOnceTooltipFunc();
         }
 
 
         void OnMouseExit()
         {
-            if (internalOnMouseExitFunc != null) internalOnMouseExitFunc();
-            if (hoverBehaviour_Move) transform.localPosition = posExit;
-            if (hoverBehaviourFunc_Exit != null) hoverBehaviourFunc_Exit();
-            if (MouseOutOnceFunc != null) MouseOutOnceFunc();
-            if (MouseOutOnceTooltipFunc != null) MouseOutOnceTooltipFunc();
+            if (internalOnMouseExitFunc != null)
+                internalOnMouseExitFunc();
+            
+            if (hoverBehaviour_Move)
+                transform.localPosition = posExit;
+            
+            if (hoverBehaviourFunc_Exit != null) 
+                hoverBehaviourFunc_Exit();
+            
+            if (MouseOutOnceFunc != null)
+                MouseOutOnceFunc();
+            
+            if (MouseOutOnceTooltipFunc != null)
+                MouseOutOnceTooltipFunc();
         }
 
 
         void OnMouseOver()
         {
-            if (!clickThroughUI && IsPointerOverUI()) return;
+            if (!clickThroughUI && IsPointerOverUI())
+                return;
 
             if (Input.GetMouseButton(1))
             {
-                if (MouseRightDownFunc != null) MouseRightDownFunc();
+                if (MouseRightDownFunc != null)
+                    MouseRightDownFunc();
+                
                 if (!draggingMouseRight && triggerMouseRightDragOnEnter)
                 {
                     draggingMouseRight = true;
@@ -141,7 +175,9 @@ namespace Utils
             {
                 draggingMouseRight = true;
                 mouseRightDragStart = GetWorldPositionFromUI();
-                if (MouseRightDownOnceFunc != null) MouseRightDownOnceFunc();
+                
+                if (MouseRightDownOnceFunc != null)
+                    MouseRightDownOnceFunc();
             }
         }
 
@@ -150,7 +186,8 @@ namespace Utils
         {
             if (draggingMouseRight)
             {
-                if (MouseRightDragUpdateFunc != null) MouseRightDragUpdateFunc(mouseRightDragStart, GetWorldPositionFromUI());
+                if (MouseRightDragUpdateFunc != null)
+                    MouseRightDragUpdateFunc(mouseRightDragStart, GetWorldPositionFromUI());
             }
 
             if (Input.GetMouseButtonUp(1))
@@ -158,17 +195,22 @@ namespace Utils
                 if (draggingMouseRight)
                 {
                     draggingMouseRight = false;
-                    if (MouseRightDragFunc != null) MouseRightDragFunc(mouseRightDragStart, GetWorldPositionFromUI());
+                    
+                    if (MouseRightDragFunc != null)
+                        MouseRightDragFunc(mouseRightDragStart, GetWorldPositionFromUI());
                 }
 
-                if (MouseRightUpFunc != null) MouseRightUpFunc();
+                if (MouseRightUpFunc != null)
+                    MouseRightUpFunc();
             }
         }
 
 
         void Awake()
         {
-            if (GetWorldCamera == null) SetGetWorldCamera(() => Camera.main);
+            if (GetWorldCamera == null)
+                SetGetWorldCamera(() => Camera.main);
+            
             posExit = transform.localPosition;
             posEnter = transform.localPosition + (Vector3)hoverBehaviour_Move_Amount;
             SetupHoverBehaviour();
@@ -190,20 +232,41 @@ namespace Utils
             switch (hoverBehaviourType)
             {
                 case HoverBehaviour.Change_Color:
-                    hoverBehaviourFunc_Enter = delegate () { hoverBehaviour_Image.color = hoverBehaviour_Color_Enter; };
-                    hoverBehaviourFunc_Exit = delegate () { hoverBehaviour_Image.color = hoverBehaviour_Color_Exit; };
+                    hoverBehaviourFunc_Enter = delegate ()
+                    {
+                        hoverBehaviour_Image.color = hoverBehaviour_Color_Enter;
+                    };
+
+                    hoverBehaviourFunc_Exit = delegate ()
+                    {
+                        hoverBehaviour_Image.color = hoverBehaviour_Color_Exit;
+                    };
                     
                     break;
                 
                 case HoverBehaviour.Change_Image:
-                    hoverBehaviourFunc_Enter = delegate () { hoverBehaviour_Image.sprite = hoverBehaviour_Sprite_Enter; };
-                    hoverBehaviourFunc_Exit = delegate () { hoverBehaviour_Image.sprite = hoverBehaviour_Sprite_Exit; };
+                    hoverBehaviourFunc_Enter = delegate ()
+                    {
+                        hoverBehaviour_Image.sprite = hoverBehaviour_Sprite_Enter;
+                    };
+
+                    hoverBehaviourFunc_Exit = delegate ()
+                    {
+                        hoverBehaviour_Image.sprite = hoverBehaviour_Sprite_Exit;
+                    };
                     
                     break;
                 
                 case HoverBehaviour.Change_SetActive:
-                    hoverBehaviourFunc_Enter = delegate () { hoverBehaviour_Image.gameObject.SetActive(true); };
-                    hoverBehaviourFunc_Exit = delegate () { hoverBehaviour_Image.gameObject.SetActive(false); };
+                    hoverBehaviourFunc_Enter = delegate ()
+                    {
+                        hoverBehaviour_Image.gameObject.SetActive(true);
+                    };
+
+                    hoverBehaviourFunc_Exit = delegate ()
+                    {
+                        hoverBehaviour_Image.gameObject.SetActive(false);
+                    };
                     
                     break;
             }
@@ -213,6 +276,7 @@ namespace Utils
         private static Vector3 GetWorldPositionFromUI()
         {
             Vector3 worldPosition = GetWorldCamera().ScreenToWorldPoint(Input.mousePosition);
+            
             return worldPosition;
         }
         private static bool IsPointerOverUI()

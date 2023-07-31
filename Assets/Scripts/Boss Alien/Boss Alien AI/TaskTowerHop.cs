@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using BehaviorTree;
 
 public class TaskTowerHop : Node
@@ -11,12 +10,11 @@ public class TaskTowerHop : Node
     private Transform[] _towers;
 
     private int _currentTowerIndex = 0;
-    private float _waitTime = 1f; // in seconds
+    private float _waitTime = 1f;
     private float _waitCounter = 0f;
     private bool _waiting = false;
     public Rigidbody2D rb;
     private VulnerableStateTrigger vulnerableStateTrigger;
-
 
 
     public TaskTowerHop(Transform transform, Transform[] towers, Rigidbody2D rb, VulnerableStateTrigger vulnerableStateTrigger)
@@ -36,7 +34,6 @@ public class TaskTowerHop : Node
             if (_waiting)
             {
                 _waitCounter += Time.deltaTime;
-               // Debug.Log(_waitCounter);
 
                 if (_waitCounter >= _waitTime)
                 {
@@ -48,6 +45,7 @@ public class TaskTowerHop : Node
             else
             {
                 Transform tower = _towers[_currentTowerIndex];
+                
                 if (Vector2.Distance(_transform.position, tower.position) < 0.01f)
                 {
                     _transform.position = tower.position;
@@ -57,6 +55,7 @@ public class TaskTowerHop : Node
                     _currentTowerIndex = (_currentTowerIndex + 1) % _towers.Length;
                     // _animator.SetBool("Jump", false);
                 }
+
                 else
                 {
                     _transform.position = Vector2.MoveTowards(_transform.position, tower.position, BossBT.speed * Time.deltaTime);
@@ -68,6 +67,7 @@ public class TaskTowerHop : Node
 
             return state;
         }
+
         else 
         {
             state = NodeState.FAILURE;
@@ -75,6 +75,4 @@ public class TaskTowerHop : Node
             return state;
         }
     }
-
- 
 }

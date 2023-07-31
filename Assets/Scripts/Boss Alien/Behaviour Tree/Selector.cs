@@ -21,10 +21,12 @@ namespace BehaviorTree
 
                     case NodeState.SUCCESS:
                         state = NodeState.SUCCESS;
+
                         return state;
 
                     case NodeState.RUNNING:
                         state = NodeState.RUNNING;
+
                         return state;
 
                     default:

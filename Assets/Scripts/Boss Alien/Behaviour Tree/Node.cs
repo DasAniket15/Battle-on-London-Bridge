@@ -98,18 +98,16 @@ namespace BehaviorTree
             return false;
         }
 
+
         public virtual NodeState GetState()
         {
             return state;
         }
 
-        // Setter method for 'state'
+
         public void SetState(NodeState newState)
         {
             state = newState;
         }
-
-
-
     }
 }

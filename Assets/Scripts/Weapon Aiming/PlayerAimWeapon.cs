@@ -3,24 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
-
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 public class PlayerAimWeapon : MonoBehaviour
 {
     public event EventHandler<OnShootEventArgs> onShoot;
+
     public class OnShootEventArgs : EventArgs
     {
         public Vector3 gunEndPointPosition;
         public Vector3 shootPosition;
     }
 
+
     private Transform aimTransform;
     private Transform aimGunEndPointTransform;
     private Animator aimAnimator;
 
-   
+    [SerializeField] private float minAimDistance = 1.5f;
+
     public GameObject projectilePrefab;
 
 
@@ -44,11 +46,11 @@ public class PlayerAimWeapon : MonoBehaviour
     {
         Vector3 mousePosition = UtilsClass.GetMouseWorldPosition();
         Vector3 aimDirection = (mousePosition - transform.position).normalized;
+
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
 
         if (mousePosition.y > 0 && angle > 0)
         {
-
             if (!GetComponentInParent<MovementScript>().isFacingRight)
             {
                 angle -= 180f;
@@ -77,25 +79,33 @@ public class PlayerAimWeapon : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePosition = UtilsClass.GetMouseWorldPosition();
-            Vector3 shootDirection = (mousePosition - aimGunEndPointTransform.position).normalized;
 
-            GameObject projectile = Instantiate(projectilePrefab, aimGunEndPointTransform.position, Quaternion.identity);
-            
+            float distanceToPlayer = Vector3.Distance(mousePosition, transform.position);
 
-            projectile.transform.right = shootDirection;
-
-            ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
-          
-
-            aimAnimator.SetTrigger("Shoot");
-
-            onShoot?.Invoke(this, new OnShootEventArgs
+            if (distanceToPlayer > minAimDistance && mousePosition.y >= transform.position.y)
             {
-                gunEndPointPosition = aimGunEndPointTransform.position,
-                shootPosition = mousePosition,
-            });
+                Vector3 shootDirection = (mousePosition - transform.position).normalized;
 
-            
+                float projectile_angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg;
+                aimGunEndPointTransform.eulerAngles = new Vector3(0, 0, projectile_angle);
+
+                GameObject projectile = Instantiate(projectilePrefab, aimGunEndPointTransform.position, aimGunEndPointTransform.rotation);
+
+                ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
+
+                aimAnimator.SetTrigger("Shoot");
+
+                onShoot?.Invoke(this, new OnShootEventArgs
+                {
+                    gunEndPointPosition = aimGunEndPointTransform.position,
+                    shootPosition = mousePosition,
+                });
+            }
+
+            else
+            {
+                Debug.Log("Cannot shoot in this direction.");
+            }
         }
     }
 }

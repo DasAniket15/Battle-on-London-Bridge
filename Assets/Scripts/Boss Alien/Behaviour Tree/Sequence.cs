@@ -20,6 +20,7 @@ namespace BehaviorTree
                 {
                     case NodeState.FAILURE:
                         state = NodeState.FAILURE;
+                        
                         return state;
 
                     case NodeState.SUCCESS:
@@ -27,10 +28,12 @@ namespace BehaviorTree
 
                     case NodeState.RUNNING:
                         anyChildIsRunning = true;
+                        
                         continue;
 
                     default:
                         state = NodeState.SUCCESS;
+                        
                         return state;
                 }
             }

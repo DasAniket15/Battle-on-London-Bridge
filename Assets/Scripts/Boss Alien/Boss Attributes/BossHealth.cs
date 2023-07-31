@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public class BossHealth : MonoBehaviour
 {
     public int maxHealth = 500;
@@ -16,9 +15,9 @@ public class BossHealth : MonoBehaviour
     public void TakeDamage(int damageAmount)
     {
         Debug.Log("Boss hit!");
+
         currentHealth -= damageAmount;
 
-        // Check if the boss is defeated
         if (currentHealth <= 0)
         {
             Defeated();
@@ -28,15 +27,18 @@ public class BossHealth : MonoBehaviour
 
     private void Defeated()
     {
-        // Handle boss defeat logic here (e.g., play defeat animation, destroy the boss, etc.)
         Debug.Log("Boss defeated!");
+
         Destroy(gameObject);
     }
+
 
     public int GetCurrentHealth()
     { 
         return currentHealth;
     }
+
+
     public void SetCurrentHealth(int currentHealth)
     {
         this.currentHealth = currentHealth;

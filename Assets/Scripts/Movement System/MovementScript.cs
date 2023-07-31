@@ -55,10 +55,8 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
     }
 
 
-    // Update is called once per frame
     void Update()
     {
-        
         // Coyote Time
         if (IsGrounded())
         {
@@ -219,7 +217,6 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
     public bool IsGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-        // return Physics2D.O
     }
 
 

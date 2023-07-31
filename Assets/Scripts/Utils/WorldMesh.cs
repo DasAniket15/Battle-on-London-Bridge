@@ -262,8 +262,6 @@ namespace Utils
         }
 
 
-        public static void CreateMesh()
-        {
-        }
+        public static void CreateMesh() { }
     }
 }

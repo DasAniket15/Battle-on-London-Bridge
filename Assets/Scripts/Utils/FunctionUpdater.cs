@@ -10,11 +10,13 @@ namespace Utils
         {
             public Action OnUpdate;
 
+
             private void Update()
             {
                 if (OnUpdate != null) OnUpdate();
             }
         }
+
 
         private static List<FunctionUpdater> updaterList;
         private static GameObject initGameObject;
@@ -74,6 +76,7 @@ namespace Utils
             gameObject.GetComponent<MonoBehaviourHook>().OnUpdate = functionUpdater.Update;
 
             updaterList.Add(functionUpdater);
+
             return functionUpdater;
         }
 
@@ -103,6 +106,7 @@ namespace Utils
                 if (updaterList[i].functionName == functionName)
                 {
                     updaterList[i].DestroySelf();
+
                     return;
                 }
             }
@@ -152,7 +156,9 @@ namespace Utils
 
         private void Update()
         {
-            if (!active) return;
+            if (!active)
+                return;
+
             if (updateFunc())
             {
                 DestroySelf();

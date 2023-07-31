@@ -5,11 +5,8 @@ using UnityEngine;
 
 public class VulnerableState : Node
 {
-
-    private GameObject currentOnewayPlatform;
     private CapsuleCollider2D bossCollider;
-    private BoxCollider2D paltformCollider;
-    private CircleCollider2D hitBox; 
+    private BoxCollider2D platformCollider;
 
     private float counter = 0f;
     private bool collision = true ;
@@ -17,57 +14,34 @@ public class VulnerableState : Node
     private float _waitTime = 5f;
 
 
-    public VulnerableState(GameObject currentOnewayPlatform, CapsuleCollider2D bossCollider, BoxCollider2D paltformCollider, CircleCollider2D hitBox)
+    public VulnerableState(CapsuleCollider2D bossCollider, BoxCollider2D platformCollider)
     {
-        this.currentOnewayPlatform = currentOnewayPlatform;
         this.bossCollider = bossCollider;
-        this.paltformCollider = paltformCollider;
-        this.hitBox = hitBox;
-
+        this.platformCollider = platformCollider;
     }
     
+
     public override NodeState Evaluate()
     {
-        
-        
-        
-    if (collision == true)
+        if (collision == true)
         {
-             // Make the boss ignore collision with the specified platform
-            Physics2D.IgnoreCollision(bossCollider, paltformCollider);
-            //Physics2D.IgnoreCollision(hitBox, paltformCollider);
+            Physics2D.IgnoreCollision(bossCollider, platformCollider);
 
             collision = false;
-            Debug.Log("1");
-            
 
            state = NodeState.RUNNING;
             return state;
-
-
-
-
         }
+
         else
         {
-            Physics2D.IgnoreCollision(bossCollider, paltformCollider, false);
+            Physics2D.IgnoreCollision(bossCollider, platformCollider, false);
 
             collision = true;
-            Debug.Log("2");
-
 
             state = NodeState.RUNNING;
+
             return state;
-
         }
-       
-        
-        // If not in the vulnerable state, do nothing
-
-
-
-
     }
-
-   
 }

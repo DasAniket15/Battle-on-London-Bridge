@@ -15,6 +15,7 @@ public class WeaponEffects : MonoBehaviour
         playerAimWeapon.onShoot += PlayerAimWeapon_OnShoot;
     }
 
+
     private void PlayerAimWeapon_OnShoot(object sender, PlayerAimWeapon.OnShootEventArgs e)
     {
         UtilsClass.ShakeCamera(.02f, .1f);

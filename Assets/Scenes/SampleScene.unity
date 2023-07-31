@@ -774,12 +774,11 @@ MonoBehaviour:
   rb: {fileID: 378635404}
   bulletCollider: {fileID: 6659847298176305927, guid: b3fbe014c3d2d1740a680dd947316f0e, type: 3}
   bossCollider: {fileID: 378635403}
-  paltformCollider: {fileID: 1312201900}
-  hitBox: {fileID: 378635405}
+  platformCollider: {fileID: 1312201900}
   bulletHit: 20
   waitTime: 10
   damageToBoss: 20
-  preFab: {fileID: 6341697272815391413, guid: b3fbe014c3d2d1740a680dd947316f0e, type: 3}
+  prefab: {fileID: 6341697272815391413, guid: b3fbe014c3d2d1740a680dd947316f0e, type: 3}
 --- !u!70 &378635403
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -2500,6 +2499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4005fb758742aaa448b4e396ad5e1be1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minAimDistance: 1.5
   projectilePrefab: {fileID: 6341697272815391413, guid: b3fbe014c3d2d1740a680dd947316f0e, type: 3}
 --- !u!95 &1302329288
 Animator:
