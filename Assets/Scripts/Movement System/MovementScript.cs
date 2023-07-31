@@ -1,30 +1,29 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
-using Utils;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
-using UnityEngine.Windows;
 
 public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActions
 {
+    // Serialized fields
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
     [SerializeField] private Transform aimTransform;
     [SerializeField] private TrailRenderer tr;
 
+    // Player controls
     private PlayerControls playerControls;
 
+    // Movement variables
     private float horizontal;
     [SerializeField] private float speed;
-
     private bool doubleJump;
     [SerializeField] private float jumpingPower;
     [SerializeField] private float doubleJumpingPower;
     [SerializeField] private float maxFallSpeed;
 
+    // Dash variables
     private bool canDash = true;
     public bool isDashing;
     private bool hasDashed;
@@ -34,68 +33,64 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
     [SerializeField] private float afterDashTime;
     [SerializeField] private float dashPushingPower;
 
+    // Coyote time variables
     private float coyoteTimeCounter;
     [SerializeField] private float coyoteTime;
 
+    // Coyote time check variables
     private bool coyoteTimeCheckBool;
     private float coyoteTimeCheckCounter;
     [SerializeField] private float coyoteTimeCheck;
 
+    // Jump buffer variables
     private float jumpBufferCounter;
     [SerializeField] private float jumpBufferTime;
 
+    // Facing direction variable
     public bool isFacingRight = true;
 
 
     private void Awake()
     {
+        // Initialize player controls
         playerControls = new PlayerControls();
-
         playerControls.PlayerMovement.SetCallbacks(this);
     }
 
-
+    // Update is called once per frame
     void Update()
     {
-        // Coyote Time
+        // Check for coyote time (allowing jump shortly after leaving the ground)
         if (IsGrounded())
         {
             coyoteTimeCounter = coyoteTime;
         }
-
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        // Coyote Time Check
+        // Check for coyote time check (used for directional dash)
         if (IsGrounded())
         {
             coyoteTimeCheckCounter = coyoteTimeCheck;
         }
-
         else
         {
             coyoteTimeCheckCounter -= Time.deltaTime;
         }
 
-        if (coyoteTimeCheckCounter > 0)
-        {
-            coyoteTimeCheckBool = true;
-        }
+        // Set coyoteTimeCheckBool based on coyoteTimeCheckCounter
+        coyoteTimeCheckBool = coyoteTimeCheckCounter > 0;
 
-        else
-        {
-            coyoteTimeCheckBool = false;
-        }
-
+        // Flip the character based on the mouse position
         Flip();
 
-        // Smoothens Player Movement
+        // Read horizontal input
         horizontal = UnityEngine.Input.GetAxis("Horizontal");
     }
 
-
+    // Fixed update is used for physics-related calculations
     private void FixedUpdate()
     {
         if (isDashing)
@@ -103,36 +98,29 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
             return;
         }
 
-        // Horizontal Movement
+        // Apply horizontal movement
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
-        // Applies momentum to character after dash
-        if (hasDashed == true && isFacingRight && !IsGrounded())
+        // Apply additional velocity when dashing and not grounded
+        if (hasDashed == true && !IsGrounded())
         {
-            rb.AddForce(new Vector2(dashPushingPower, rb.velocity.y));
+            float pushingPower = isFacingRight ? dashPushingPower : -dashPushingPower;
+            rb.AddForce(new Vector2(pushingPower, rb.velocity.y));
         }
 
-        if (hasDashed == true && !isFacingRight && !IsGrounded())
-        {
-            rb.AddForce(new Vector2(-dashPushingPower, rb.velocity.y));
-        }
-
-        // Clamp Fall Velocity
+        // Limit the fall speed
         if (rb.velocity.y < maxFallSpeed)
         {
             rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
         }
     }
 
-
-    // Input System Method for Horizontal Movement
+    // InputSystem callbacks
     public void OnMove(InputAction.CallbackContext context)
     {
         horizontal = context.ReadValue<Vector2>().x;
     }
 
-
-    // Input System Method for Jump Mechanics
     public void OnJump(InputAction.CallbackContext context)
     {
         if (isDashing)
@@ -140,23 +128,23 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
             return;
         }
 
-        // Jump Buffer
+        // Handle jump buffer to allow jumping a short time before hitting the ground
         if (context.performed)
         {
             jumpBufferCounter = jumpBufferTime;
         }
-
         else
         {
             jumpBufferCounter -= Time.deltaTime;
         }
 
-        // Jump and Double Jump Logic
+        // Check for initial jump or double jump
         if (context.performed && IsGrounded())
         {
             doubleJump = false;
         }
 
+        // Handle actual jumping and double jumping
         if (jumpBufferCounter > 0f)
         {
             if (coyoteTimeCounter > 0f || doubleJump)
@@ -169,6 +157,7 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
             }
         }
 
+        // Cancel coyote time if jump is canceled mid-air
         if (context.canceled && !IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y);
@@ -177,8 +166,6 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
         }
     }
 
-
-    // Input System Method for Dash Mechanic
     public void OnDash(InputAction.CallbackContext context)
     {
         if (context.performed && canDash)
@@ -186,7 +173,6 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
             StartCoroutine(Dash());
         }
     }
-
 
     public IEnumerator Dash()
     {
@@ -200,6 +186,7 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
         tr.emitting = true;
 
         yield return new WaitForSeconds(dashingTime);
+
         tr.emitting = false;
         rb.gravityScale = originalGravity;
         isDashing = false;
@@ -212,39 +199,21 @@ public class MovementScript : MonoBehaviour, PlayerControls.IPlayerMovementActio
         canDash = true;
     }
 
-
-    // Checks if player is grounded or not
+    // Check if the character is grounded
     public bool IsGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
-
-    // Flips character sprite to face correct direction
+    // Flip the character's sprite based on the mouse position
     private void Flip()
     {
         Vector3 mousePosition = UnityEngine.Input.mousePosition;
-
         Vector3 playerPosition = Camera.main.WorldToScreenPoint(transform.position);
 
-        if (mousePosition.x < playerPosition.x)
-        {
-            isFacingRight = false;
-        }
+        isFacingRight = mousePosition.x >= playerPosition.x;
 
-        else
-        {
-            isFacingRight = true;
-        }
-
-        if (isFacingRight)
-        {
-            transform.localScale = new Vector3(1.53f, 1.527423f, 1.504272f);
-        }
-
-        else
-        {
-            transform.localScale = new Vector3(-1.53f, 1.527423f, 1.504272f);
-        }
+        // Flip the character's sprite
+        transform.localScale = new Vector3(isFacingRight ? 1.53f : -1.53f, 1.527423f, 1.504272f);
     }
 }
