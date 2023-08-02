@@ -16,14 +16,17 @@ public class VulnerableStateTrigger : Node
     private int bulletHit; // The number of times the boss needs to be hit by projectiles to trigger vulnerability
     private int waitTime; // The duration of the vulnerable state (time until vulnerability ends)
     private int damageToBoss; // Damage dealt to the boss during the vulnerable state
+    private bool nonVulnerabiltyOver = true;
+    private int vulnerableBulletHit;
 
-    public VulnerableStateTrigger(BossHealth bossHealth, ProjectileController projectileController, int bulletHit, int waitTime, int damageToBoss)
+    public VulnerableStateTrigger(BossHealth bossHealth, ProjectileController projectileController, int bulletHit, int waitTime, int damageToBoss, int vulnerableBulletHit)
     {
         this.bossHealth = bossHealth; // Initialize the BossHealth reference
         this.projectileController = projectileController; // Initialize the ProjectileController reference
         this.bulletHit = bulletHit; // Initialize the bullet hit count needed to trigger vulnerability
         this.waitTime = waitTime; // Initialize the vulnerable state duration
         this.damageToBoss = damageToBoss; // Initialize the damage dealt to the boss during vulnerability
+        this.vulnerableBulletHit = vulnerableBulletHit;
     }
 
     // Override the Evaluate method to define the behavior of the boss's vulnerable state trigger
@@ -37,25 +40,38 @@ public class VulnerableStateTrigger : Node
         {
             // If the boss has been hit the required number of times, trigger vulnerability.
             vulnerability = true;
+          
+
 
             projectileController.SetCounter(bulletHit + 1); // Increase the bullet hit count to prevent repeated triggers
             projectileController.SetDamage(damageToBoss); // Set the damage dealt to the boss during vulnerability
+            projectileController.SetCounter(0);
+            nonVulnerabiltyOver = false;
+           
+
 
             // Use FunctionTimer to schedule the vulnerableAction method to be called after the wait time.
-            FunctionTimer.Create(vulnerableAction, waitTime);
+            FunctionTimer.Create(vulnerableAction, waitTime, "VulnerabilityTimer");
+            
 
             state = NodeState.SUCCESS; // The vulnerable state trigger succeeds
 
             return state;
         }
-        else if (vulnerabilityOver == true)
+        else if ((vulnerabilityOver == true || projectileController.GetCounter() == vulnerableBulletHit ) && nonVulnerabiltyOver == false)
         {
             // If the vulnerability is over (vulnerableAction method has been called), reset the vulnerability state.
+            if (projectileController.GetCounter() == vulnerableBulletHit) 
+            {
+                FunctionTimer.StopAllTimersWithName("VulnerabilityTimer");
+            }
             vulnerabilityOver = false;
             vulnerability = false;
+            nonVulnerabiltyOver = true;
 
             projectileController.SetCounter(0); // Reset the bullet hit count
             projectileController.SetDamage(0); // Reset the damage dealt to the boss during vulnerability
+            
 
             state = NodeState.RUNNING; // The vulnerable state trigger is still running
 
@@ -74,6 +90,7 @@ public class VulnerableStateTrigger : Node
     private void vulnerableAction()
     {
         vulnerabilityOver = true; // Set the vulnerability over flag to true
+       
 
         _waitCounter = _waitCounter + 1; // Increment the wait counter to track the number of times the vulnerability is triggered.
 

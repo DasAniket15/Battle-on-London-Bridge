@@ -16,6 +16,7 @@ public class BossBT : BehaviorTree.Tree
     [SerializeField] private int bulletHit; // Number of hits the boss can take from bullets
     [SerializeField] private int waitTime; // Time the boss waits in vulnerable state after getting hit
     [SerializeField] private int damageToBoss; // Damage dealt by boss to other objects
+    [SerializeField] private int vulnerableBulletHit;
 
     public GameObject prefab; // Prefab of the projectile the boss fires
 
@@ -32,7 +33,7 @@ public class BossBT : BehaviorTree.Tree
         bossHealth = GetComponent<BossHealth>();
 
         // Create a new instance of the VulnerableStateTrigger custom node
-        vulnerableStateTrigger = new VulnerableStateTrigger(bossHealth, projectileController, bulletHit, waitTime, damageToBoss);
+        vulnerableStateTrigger = new VulnerableStateTrigger(bossHealth, projectileController, bulletHit, waitTime, damageToBoss, vulnerableBulletHit);
 
         // Create the behavior tree with a selector node as the root
         Node root = new Selector(new List<Node>
