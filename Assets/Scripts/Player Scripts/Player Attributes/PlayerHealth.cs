@@ -18,7 +18,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damageAmount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        Debug.Log(currentHealth);
+        Debug.Log("Player health: " + currentHealth);
 
         // TODO: Handle any effects for taking damage, e.g., screen shake, sound, etc.
 
@@ -27,5 +27,17 @@ public class PlayerHealth : MonoBehaviour
             // TODO: Implement game over or player death logic
             Debug.Log("Player has no more hearts. Game Over!");
         }
+
+        // Update the hearts UI
+        PlayerHealthUI playerHealthUI = FindObjectOfType<PlayerHealthUI>();
+        if (playerHealthUI != null)
+        {
+            playerHealthUI.UpdateHearts();
+        }
+    }
+
+    public float GetCurrentHealth()
+    {
+        return currentHealth;
     }
 }

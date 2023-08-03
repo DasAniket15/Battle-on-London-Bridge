@@ -26,6 +26,9 @@ public class PlayerAimWeapon : MonoBehaviour
     // Projectile prefab to be instantiated when shooting
     public GameObject projectilePrefab;
 
+    // Reference to the PauseMenu script
+    public PauseMenu pauseMenu;
+
     private void Awake()
     {
         // Initialize aim transforms and animator
@@ -36,9 +39,12 @@ public class PlayerAimWeapon : MonoBehaviour
 
     private void Update()
     {
-        // Handle aiming and shooting
-        HandleAiming();
-        HandleShooting();
+        // Only handle aiming and shooting if the game is not paused
+        if (!PauseMenu.GamePaused)
+        {
+            HandleAiming();
+            HandleShooting();
+        }
     }
 
     private void HandleAiming()
@@ -79,7 +85,7 @@ public class PlayerAimWeapon : MonoBehaviour
     private void HandleShooting()
     {
         // Check for mouse button down to initiate shooting
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !PauseMenu.GamePaused) // Check if the game is not paused
         {
             // Get the mouse position in the world
             Vector3 mousePosition = UtilsClass.GetMouseWorldPosition();

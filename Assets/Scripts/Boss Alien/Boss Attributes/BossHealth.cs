@@ -16,6 +16,7 @@ public class BossHealth : MonoBehaviour
         Debug.Log("Boss hit!");
 
         currentHealth -= damageAmount; // Reduce the current health by the damage amount received
+        currentHealth = (int)Mathf.Clamp(currentHealth, 0f, maxHealth);
 
         // Check if boss's health has reached the critical point, and shift boss to phase 2 of the fight
         if (currentHealth == 600)
@@ -48,5 +49,10 @@ public class BossHealth : MonoBehaviour
     public void SetCurrentHealth(int currentHealth)
     {
         this.currentHealth = currentHealth;
+    }
+
+    public float GetCurrentHealthPercentage()
+    {
+        return (float)currentHealth / maxHealth;
     }
 }
