@@ -16,10 +16,15 @@ public class VulnerableStateTrigger : Node
     private int bulletHit; // The number of times the boss needs to be hit by projectiles to trigger vulnerability
     private int waitTime; // The duration of the vulnerable state (time until vulnerability ends)
     private int damageToBoss; // Damage dealt to the boss during the vulnerable state
-    private bool nonVulnerabiltyOver = true;
+    public bool nonVulnerabiltyOver = true;
     private int vulnerableBulletHit;
+    public bool phaseTwo = false;
+    public bool canDive ;
+    private CapsuleCollider2D bossCollider; // Reference to the capsule collider of the boss
+    private BoxCollider2D platformCollider; // Reference to the box collider of the platform the boss stands on
+    private Laser laser;
 
-    public VulnerableStateTrigger(BossHealth bossHealth, ProjectileController projectileController, int bulletHit, int waitTime, int damageToBoss, int vulnerableBulletHit)
+    public VulnerableStateTrigger(BossHealth bossHealth, ProjectileController projectileController, int bulletHit, int waitTime, int damageToBoss, int vulnerableBulletHit, CapsuleCollider2D bossCollider, BoxCollider2D platformCollider, Laser laser)
     {
         this.bossHealth = bossHealth; // Initialize the BossHealth reference
         this.projectileController = projectileController; // Initialize the ProjectileController reference
@@ -27,16 +32,62 @@ public class VulnerableStateTrigger : Node
         this.waitTime = waitTime; // Initialize the vulnerable state duration
         this.damageToBoss = damageToBoss; // Initialize the damage dealt to the boss during vulnerability
         this.vulnerableBulletHit = vulnerableBulletHit;
+        this.bossCollider = bossCollider;
+        this.platformCollider  = platformCollider;
+        this.laser = laser;
     }
 
     // Override the Evaluate method to define the behavior of the boss's vulnerable state trigger
     public override NodeState Evaluate()
     {
         currentHealth = bossHealth.GetCurrentHealth(); // Get the current health of the boss
-
         Debug.Log(currentHealth);
+        
+        if (currentHealth == 720) 
+        {
+            
+            phaseTwo = true;
+            laser.StartCoroutine(laser.LaserAttackPattern());
+            FunctionTimer.StopAllTimersWithName("VulnerabilityTimer");
+            vulnerability= false;
+            canDive = false;
+            projectileController.SetCounter(0);
+            projectileController.SetDamage(0);
+            bossHealth.SetCurrentHealth(700);
+            // currentHealth = currentHealth - 20;
 
-        if (projectileController.GetCounter() == bulletHit)
+            state = NodeState.SUCCESS; // The vulnerable state trigger is still running
+
+            return state;
+
+
+
+        }
+        if (currentHealth == 500)
+        {
+            phaseTwo = true;
+            FunctionTimer.StopAllTimersWithName("VulnerabilityTimer");
+            vulnerability = false;
+            canDive = false;
+            projectileController.SetCounter(0);
+            projectileController.SetDamage(0);
+            bossHealth.SetCurrentHealth(480);
+            // currentHealth = currentHealth - 20;
+
+            state = NodeState.SUCCESS; // The vulnerable state trigger is still running
+
+            return state;
+
+
+
+        }
+
+
+
+
+        //Debug.Log(currentHealth);
+
+        if (projectileController.GetCounter() == bulletHit && phaseTwo == false)
         {
             // If the boss has been hit the required number of times, trigger vulnerability.
             vulnerability = true;
@@ -45,6 +96,7 @@ public class VulnerableStateTrigger : Node
 
             projectileController.SetCounter(bulletHit + 1); // Increase the bullet hit count to prevent repeated triggers
             projectileController.SetDamage(damageToBoss); // Set the damage dealt to the boss during vulnerability
+          
             projectileController.SetCounter(0);
             nonVulnerabiltyOver = false;
            
@@ -58,7 +110,7 @@ public class VulnerableStateTrigger : Node
 
             return state;
         }
-        else if ((vulnerabilityOver == true || projectileController.GetCounter() == vulnerableBulletHit ) && nonVulnerabiltyOver == false)
+        else if ((vulnerabilityOver == true || projectileController.GetCounter() == vulnerableBulletHit ) && nonVulnerabiltyOver == false && phaseTwo == false)
         {
             // If the vulnerability is over (vulnerableAction method has been called), reset the vulnerability state.
             if (projectileController.GetCounter() == vulnerableBulletHit) 
@@ -73,7 +125,7 @@ public class VulnerableStateTrigger : Node
             projectileController.SetDamage(0); // Reset the damage dealt to the boss during vulnerability
             
 
-            state = NodeState.RUNNING; // The vulnerable state trigger is still running
+            state = NodeState.SUCCESS; // The vulnerable state trigger is still running
 
             return state;
         }

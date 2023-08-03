@@ -1,32 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using BehaviorTree;
+using UnityEngine;
+using Utils;
 
-public class TaskTowerHop : Node
+public class DiveAttackTrigger : Node
 {
     private Transform _transform; // Reference to the boss's transform
     private Transform[] _towers; // Array of tower transforms the boss will hop between
+    private Transform transformHero; // transform of hero
     private int _currentTowerIndex = 0; // Index of the current tower the boss is hopping to
     private float _waitTime = 1f; // Time the boss waits on a tower before hopping to the next one
     private float _waitCounter = 0f; // Counter to track the waiting time
     private bool _waiting = false; // Flag to check if the boss is waiting on a tower
-    public Rigidbody2D rb; // Rigidbody2D component of the hero
-    private VulnerableStateTrigger vulnerableStateTrigger; // Reference to the vulnerable state trigger custom node
+    private ProjectileController projectileController;
 
-    public TaskTowerHop(Transform transform, Transform[] towers, Rigidbody2D rb, VulnerableStateTrigger vulnerableStateTrigger)
+    private LaserAttack laserAttack;
+    private VulnerableStateTrigger vulnerableStateTrigger;
+    private Rigidbody2D rb;
+    private DiveAttack diveAttack;
+  
+    public DiveAttackTrigger(Transform transform, Transform[] towers, Rigidbody2D rb, VulnerableStateTrigger vulnerableStateTrigger, DiveAttack diveAttack, ProjectileController projectileController)
     {
         _transform = transform; // Initialize the boss's transform
         _towers = towers; // Initialize the tower transforms array
-        this.rb = rb; // Initialize the boss's Rigidbody2D component
+        this.rb = rb; // Initialize the heros Rigidbody2D component
         this.vulnerableStateTrigger = vulnerableStateTrigger; // Initialize the vulnerable state trigger custom node
+        this.diveAttack = diveAttack;
+        this.projectileController = projectileController;
     }
-
-    // Override the Evaluate method to define the behavior of the boss hopping between towers
     public override NodeState Evaluate()
+
     {
-        if (vulnerableStateTrigger.vulnerability == false && vulnerableStateTrigger.phaseTwo == false)
+
+       
+        if (vulnerableStateTrigger.vulnerability == false && vulnerableStateTrigger.phaseTwo == true && vulnerableStateTrigger.canDive == false && diveAttack.diveAttackHappening ==false)
         {
+            Debug.Log("DiveAttack");
+           // Debug.Log(projectileController.GetCounter());
             // If the boss is waiting, increment the wait counter and check if the waiting time is over
             if (_waiting)
             {
@@ -35,11 +46,14 @@ public class TaskTowerHop : Node
                 if (_waitCounter >= _waitTime)
                 {
                     _waiting = false;
+                  
                 }
             }
             else
             {
                 Transform tower = _towers[_currentTowerIndex]; // Get the current target tower transform
+
+                transformHero = rb.GetComponent<Transform>();
 
                 // If the boss is close enough to the target tower, set the boss's position to the tower's position,
                 // reset the wait counter, and set the waiting flag to true.
@@ -56,10 +70,21 @@ public class TaskTowerHop : Node
                 {
                     // Move the boss towards the target tower using the specified speed
                     _transform.position = Vector2.MoveTowards(_transform.position, tower.position, BossBT.speed * Time.deltaTime);
+                   
+                 
+
+                }
+                if (projectileController.GetCounter() >= 20)
+                {
+                    vulnerableStateTrigger.canDive = true;
+                    projectileController.SetCounter(0);
+                    
+
                 }
             }
 
-            state = NodeState.RUNNING; // The node is still running
+           
+            state = NodeState.SUCCESS; // The node is still running
 
             return state;
         }
@@ -69,5 +94,13 @@ public class TaskTowerHop : Node
 
             return state;
         }
+    }
+
+    private void diveTriggerAction()
+    {
+
+       
+
+       
     }
 }

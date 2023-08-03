@@ -25,6 +25,7 @@ public class VulnerableState : Node
         if (collision == true)
         {
             Physics2D.IgnoreCollision(bossCollider, platformCollider); // Ignore collision between the boss and the platform
+            Debug.Log("YO");
 
             collision = false; // Set the collision flag to false to prevent repeated ignore collisions
 
@@ -36,6 +37,7 @@ public class VulnerableState : Node
         else
         {
             Physics2D.IgnoreCollision(bossCollider, platformCollider, false); // Enable collision between the boss and the platform
+            Debug.Log("BRO");
 
             collision = true; // Set the collision flag to true for the next vulnerable state
 
