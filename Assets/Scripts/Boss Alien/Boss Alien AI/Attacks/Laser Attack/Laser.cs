@@ -149,7 +149,7 @@ public class Laser : MonoBehaviour
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(0.5f); // Reduce player health by 1
+                playerHealth.TakeDamage(1f); // Reduce player health by 1
             }
 
             // TODO: Implement any visual/audio feedback for player getting hit
