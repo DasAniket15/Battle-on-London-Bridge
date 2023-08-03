@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+
 public class Laser : MonoBehaviour
 {
     public GameObject laserPrefab;
@@ -10,16 +11,31 @@ public class Laser : MonoBehaviour
     public int minLasersToActivate;
     public int maxLasersToActivate;
     public GameObject warningEffectPrefab;
+    private bool laserAllowed ;
+    private static BossHealth bossHealth;
 
     private bool isAttacking = false;
 
     void Start()
     {
-        // Start the laser attack pattern
-        StartCoroutine(LaserAttackPattern());
+       
+            Debug.Log("Start");
+            StartCoroutine(LaserAttackPattern());
+        
+
+
+    }
+    private void FixedUpdate()
+    {
+       
     }
 
-    IEnumerator LaserAttackPattern()
+    public void SetLaserBool(bool laserAllowed) 
+    { 
+        this.laserAllowed = laserAllowed;   
+    }
+
+    public IEnumerator LaserAttackPattern()
     {
         while (true)
         {
