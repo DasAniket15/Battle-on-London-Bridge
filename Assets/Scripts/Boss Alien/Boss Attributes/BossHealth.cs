@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BossHealth : MonoBehaviour
 {
-    public int maxHealth = 500; // Maximum health of the boss
+    public int maxHealth; // Maximum health of the boss
     private int currentHealth; // Current health of the boss
 
     private void Start()
@@ -16,6 +16,12 @@ public class BossHealth : MonoBehaviour
         Debug.Log("Boss hit!");
 
         currentHealth -= damageAmount; // Reduce the current health by the damage amount received
+
+        // Check if boss's health has reached the critical point, and shift boss to phase 2 of the fight
+        if (currentHealth == 600)
+        {
+            
+        }
 
         // Check if the boss's health has reached zero or below
         if (currentHealth <= 0)

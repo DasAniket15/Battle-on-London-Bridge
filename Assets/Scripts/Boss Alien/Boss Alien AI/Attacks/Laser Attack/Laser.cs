@@ -5,10 +5,10 @@ public class Laser : MonoBehaviour
 {
     public GameObject laserPrefab;
     public Transform[] laserSpawnPoints;
-    public float timeBetweenAttacks = 5f;
-    public float laserDuration = 2f;
-    public int minLasersToActivate = 1;
-    public int maxLasersToActivate = 3;
+    public float timeBetweenAttacks;
+    public float laserDuration;
+    public int minLasersToActivate;
+    public int maxLasersToActivate;
     public GameObject warningEffectPrefab;
 
     private bool isAttacking = false;
@@ -35,23 +35,6 @@ public class Laser : MonoBehaviour
             // Start the laser attack sequence
             isAttacking = true;
 
-            // Randomly determine the number of lasers to activate
-            int numLasersToActivate = Random.Range(minLasersToActivate, maxLasersToActivate + 1);
-
-            // Randomly choose which spawn points to use for the laser attack
-            Transform[] selectedSpawnPoints = new Transform[numLasersToActivate];
-            ShuffleArray(laserSpawnPoints);
-            for (int i = 0; i < numLasersToActivate; i++)
-            {
-                selectedSpawnPoints[i] = laserSpawnPoints[i];
-            }
-
-            // Activate the selected lasers
-            foreach (Transform spawnPoint in selectedSpawnPoints)
-            {
-                StartCoroutine(LaserAttack(spawnPoint));
-            }
-
             yield return new WaitForSeconds(laserDuration);
             Debug.Log("Destroy");
             isAttacking = false;
@@ -60,6 +43,9 @@ public class Laser : MonoBehaviour
 
     IEnumerator ShowWarningEffect()
     {
+        // Start the laser attack sequence
+        isAttacking = true;
+
         // Randomly determine the number of lasers to activate
         int numLasersToActivate = Random.Range(minLasersToActivate, maxLasersToActivate + 1);
 
@@ -67,14 +53,14 @@ public class Laser : MonoBehaviour
         ShuffleArray(laserSpawnPoints);
 
         // Choose a random subset of spawn points for the warning effect
-        Transform[] warningSpawnPoints = new Transform[numLasersToActivate];
+        Transform[] selectedSpawnPoints = new Transform[numLasersToActivate];
         for (int i = 0; i < numLasersToActivate; i++)
         {
-            warningSpawnPoints[i] = laserSpawnPoints[i];
+            selectedSpawnPoints[i] = laserSpawnPoints[i];
         }
 
         // Instantiate and show the warning effect at the selected spawn points
-        foreach (Transform spawnPoint in warningSpawnPoints)
+        foreach (Transform spawnPoint in selectedSpawnPoints)
         {
             GameObject warningEffect = Instantiate(warningEffectPrefab, spawnPoint.position, Quaternion.identity);
             warningEffect.SetActive(true);
@@ -83,8 +69,8 @@ public class Laser : MonoBehaviour
         // Wait for the warning effect duration
         yield return new WaitForSeconds(1.5f); // Adjust the duration as needed
 
-        // Destroy the warning effects
-        foreach (Transform spawnPoint in warningSpawnPoints)
+        // Destroy all warning effects
+        foreach (Transform spawnPoint in selectedSpawnPoints)
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPoint.position, 1f); // Adjust the radius as needed
             foreach (Collider2D collider in colliders)
@@ -95,12 +81,27 @@ public class Laser : MonoBehaviour
                 }
             }
         }
+
+        // Wait for a short delay before spawning the lasers
+        yield return new WaitForSeconds(0.5f); // Adjust the delay as needed
+
+        // Spawn the lasers at the selected spawn points
+        foreach (Transform spawnPoint in selectedSpawnPoints)
+        {
+            StartCoroutine(LaserAttack(spawnPoint));
+        }
+
+        // Wait for the laser duration
+        yield return new WaitForSeconds(laserDuration);
+
+        // End the laser attack sequence
+        isAttacking = false;
     }
 
     IEnumerator LaserAttack(Transform spawnPoint)
     {
         // Instantiate the laser prefab at the spawn point
-        GameObject laserInstance = Instantiate(laserPrefab, spawnPoint.position, Quaternion.identity);
+        GameObject laserInstance = Instantiate(laserPrefab, spawnPoint.position, Quaternion.Euler(0, 0, 90));
 
         // Move the laser down to the ground
         float elapsedTime = 0f;
@@ -117,12 +118,27 @@ public class Laser : MonoBehaviour
             }
 
             elapsedTime += Time.deltaTime;
-            laserInstance.transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / laserDuration);
             yield return null;
         }
 
         // Ensure the laser reaches the target position
         laserInstance.transform.position = targetPosition;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Player got hit by the laser, reduce their health
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(0.5f); // Reduce player health by 1
+            }
+
+            // TODO: Implement any visual/audio feedback for player getting hit
+            Debug.Log("Laser hit player!");
+        }
     }
 
     // Shuffle the array using Fisher-Yates shuffle algorithm
