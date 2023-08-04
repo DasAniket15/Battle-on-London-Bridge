@@ -21,6 +21,7 @@ public class PlayerDefeat : MonoBehaviour
     // Method to retry the game (called from the "Retry" button in the UI)
     public void Retry()
     {
+        Time.timeScale = 1f;
         GameOver = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -28,8 +29,9 @@ public class PlayerDefeat : MonoBehaviour
     // Method to return to the main menu (called from the "Main Menu" button in the UI)
     public void MainMenu()
     {
+        Time.timeScale = 1f;
         GameOver = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1); // Replace "MainMenu" with the name of your main menu scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 2); // Replace "MainMenu" with the name of your main menu scene
     }
 
     public void QuitGame()

@@ -157,6 +157,22 @@ public class Laser : MonoBehaviour
         }
     }
 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Player got hit by the laser, reduce their health
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(0f); // Reduce player health by 1
+            }
+
+            // TODO: Implement any visual/audio feedback for player getting hit
+            Debug.Log("This is a scam.");
+        }
+    }
+
     // Shuffle the array using Fisher-Yates shuffle algorithm
     private void ShuffleArray<T>(T[] array)
     {

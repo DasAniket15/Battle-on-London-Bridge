@@ -23,6 +23,7 @@ public class VulnerableStateTrigger : Node
     private CapsuleCollider2D bossCollider; // Reference to the capsule collider of the boss
     private BoxCollider2D platformCollider; // Reference to the box collider of the platform the boss stands on
     private Laser laser;
+    public Animator animator;
 
     public VulnerableStateTrigger(BossHealth bossHealth, ProjectileController projectileController, int bulletHit, int waitTime, int damageToBoss, int vulnerableBulletHit, CapsuleCollider2D bossCollider, BoxCollider2D platformCollider, Laser laser)
     {
@@ -43,7 +44,7 @@ public class VulnerableStateTrigger : Node
         currentHealth = bossHealth.GetCurrentHealth(); // Get the current health of the boss
         Debug.Log(currentHealth);
         
-        if (currentHealth == 720) 
+        if (currentHealth == 520) 
         {
             
             phaseTwo = true;
@@ -53,8 +54,10 @@ public class VulnerableStateTrigger : Node
             canDive = false;
             projectileController.SetCounter(0);
             projectileController.SetDamage(0);
-            bossHealth.SetCurrentHealth(700);
+            bossHealth.SetCurrentHealth(500);
             // currentHealth = currentHealth - 20;
+            animator = bossHealth.GetComponent<Animator>();
+            animator.Play("bossAngry");
 
             state = NodeState.SUCCESS; // The vulnerable state trigger is still running
 
@@ -63,7 +66,7 @@ public class VulnerableStateTrigger : Node
 
 
         }
-        if (currentHealth == 500)
+        if (currentHealth == 300)
         {
             phaseTwo = true;
             FunctionTimer.StopAllTimersWithName("VulnerabilityTimer");
@@ -71,8 +74,30 @@ public class VulnerableStateTrigger : Node
             canDive = false;
             projectileController.SetCounter(0);
             projectileController.SetDamage(0);
-            bossHealth.SetCurrentHealth(480);
+            bossHealth.SetCurrentHealth(280);
             // currentHealth = currentHealth - 20;
+            animator = bossHealth.GetComponent<Animator>();
+            animator.Play("bossAngry");
+
+            state = NodeState.SUCCESS; // The vulnerable state trigger is still running
+
+            return state;
+
+
+
+        }
+        if (currentHealth == 200)
+        {
+            phaseTwo = true;
+            FunctionTimer.StopAllTimersWithName("VulnerabilityTimer");
+            vulnerability = false;
+            canDive = false;
+            projectileController.SetCounter(0);
+            projectileController.SetDamage(0);
+            bossHealth.SetCurrentHealth(180);
+            // currentHealth = currentHealth - 20;
+            animator = bossHealth.GetComponent<Animator>();
+            animator.Play("bossAngry");
 
             state = NodeState.SUCCESS; // The vulnerable state trigger is still running
 
@@ -91,9 +116,9 @@ public class VulnerableStateTrigger : Node
         {
             // If the boss has been hit the required number of times, trigger vulnerability.
             vulnerability = true;
-          
 
-
+            animator = bossHealth.GetComponent<Animator>(); 
+            animator.Play("bossVulnerable");
             projectileController.SetCounter(bulletHit + 1); // Increase the bullet hit count to prevent repeated triggers
             projectileController.SetDamage(damageToBoss); // Set the damage dealt to the boss during vulnerability
           
@@ -113,6 +138,8 @@ public class VulnerableStateTrigger : Node
         else if ((vulnerabilityOver == true || projectileController.GetCounter() == vulnerableBulletHit ) && nonVulnerabiltyOver == false && phaseTwo == false)
         {
             // If the vulnerability is over (vulnerableAction method has been called), reset the vulnerability state.
+            animator = bossHealth.GetComponent<Animator>();
+            animator.Play("Boss_IDLE");
             if (projectileController.GetCounter() == vulnerableBulletHit) 
             {
                 FunctionTimer.StopAllTimersWithName("VulnerabilityTimer");

@@ -19,8 +19,8 @@ public class PlayerHealthUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        float heartWidth = 2.5f; // Width of the heart sprite, adjust as needed
-        float spacing = 0.5f; // Spacing between hearts, adjust as needed
+        float heartWidth = 1.5f; // Width of the heart sprite, adjust as needed
+        float spacing = 0.00000005f; // Spacing between hearts, adjust as needed
 
         Vector3 spawnPosition = heartContainer.position;
         spawnPosition.x -= ((playerHealth.maxHealth - 1) * (heartWidth + spacing)) / 2f;

@@ -96,11 +96,5 @@ public class DiveAttackTrigger : Node
         }
     }
 
-    private void diveTriggerAction()
-    {
-
-       
-
-       
-    }
+    private void diveTriggerAction() { }
 }

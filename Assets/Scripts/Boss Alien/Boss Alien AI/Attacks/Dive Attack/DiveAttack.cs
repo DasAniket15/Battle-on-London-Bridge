@@ -39,7 +39,6 @@ public class DiveAttack : Node
     {
         transformHero = rb.GetComponent<Transform>();
         Transform tower = _towers[1]; // Get the current target tower transform
-        //FunctionTimer.Create(diveAction, 3f, "1");
 
         if (vulnerableStateTrigger.canDive == true)
         {
@@ -75,8 +74,6 @@ public class DiveAttack : Node
 
                 }
 
-
-
             }
             else
             {
@@ -95,15 +92,10 @@ public class DiveAttack : Node
             state = NodeState.FAILURE;
             return state;
         }
-
-
     }
 
     private void diveAction()
     {
-
-       
-
         Debug.Log("Dive");
     }
 }
