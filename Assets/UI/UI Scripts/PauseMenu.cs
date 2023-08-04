@@ -50,9 +50,4 @@ public class PauseMenu : MonoBehaviour
         Debug.Log("QUITTING GAME...");
         Application.Quit();
     }
-
-    public bool CanShoot()
-    {
-        return !GamePaused;
-    }
 }

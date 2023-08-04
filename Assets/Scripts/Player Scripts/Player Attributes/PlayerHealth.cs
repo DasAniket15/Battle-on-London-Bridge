@@ -6,7 +6,7 @@ public class PlayerHealth : MonoBehaviour
     public float maxHealth;
     private float currentHealth;
 
-    // TODO: Add any visual feedback for player taking damage (e.g., flashing)
+    public PlayerDefeat playerDefeat; // Reference to the GameOverPlayerDefeat script
 
     private void Start()
     {
@@ -20,11 +20,8 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("Player health: " + currentHealth);
 
-        // TODO: Handle any effects for taking damage, e.g., screen shake, sound, etc.
-
         if (currentHealth <= 0)
         {
-            // TODO: Implement game over or player death logic
             Debug.Log("Player has no more hearts. Game Over!");
         }
 
